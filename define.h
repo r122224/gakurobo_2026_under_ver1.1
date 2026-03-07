@@ -79,6 +79,14 @@ struct side4 {
     double back;
 };
 
+struct cam {
+    double x;
+    double y;
+    double z;
+    double pitch;
+    double yaw;
+};
+
 enum Direction {//定数の種類，数を明確にしたいときenumを使う．
    UP_dir=0, RIGHT_dir=1, DOWN_dir=2, LEFT_dir=3 
 };

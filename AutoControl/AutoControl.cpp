@@ -983,7 +983,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         // phase = 241;
         motion.setPathNum(2, 0);
         setConvPara(0.01, 0.998);
-        set_front_posi = STORAGE_POSI;
+        set_front_posi = front_lift_init;
         phase = 241;
     break;
 
