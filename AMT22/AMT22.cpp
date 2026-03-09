@@ -54,7 +54,7 @@ int AMT203V::getRawEncount(){
   wait_ns(3000);
   CSBpin->write(1);
   wait_us(40);
-    
+
   bool odd, even;
   for(int i = 0; i < 14; i++){
       if(i % 2){
@@ -74,7 +74,7 @@ int AMT203V::getRawEncount(){
   }/*else{
       printf("xxx : %d %x\n", rawValue, rawValue);
   }*/
-  
+
   return 1;
 }
 

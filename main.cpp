@@ -2724,16 +2724,17 @@ sprintf(str,"[INFO]bno on\n");
                 back_lift_posi = -(-0.067 * get_lift_back_posi)*10*2 + back_lift_init;
             }
 
-            if(!limit8read){
+            if(!limit8read && flag_lift == 1){
                 set_height_front = true;
                 front_lift_posi = front_lift_init;
                 get_lift_front_posi = 0;
             }
-            if(!limit9read){
+            if(!limit9read && flag_lift == 1){
                 set_height_back = true;
                 back_lift_posi = back_lift_init;
                 get_lift_back_posi = 0;
             }
+
 
             //足回り自己位置-------------------------------------------------------------------------
             double get_anglez = 0.000;
@@ -3575,12 +3576,12 @@ sprintf(str,"[INFO]bno on\n");
                 case 2://前移動
                     ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
                     ref_lift_back_posi = STEP_DOWN_BACK_LOW;
-                    vel_lift_back = 0.2;
+                    vel_lift_back = 0.23;
                     ControlMode = MANUAL_MODE;
                     autostep_mode = true;
                     air_state = true;
                     air_up_flag = true;
-                    refV.x = 0.2;
+                    refV.x = 0.23;
                     if(pre_kouden2read == 0 && kouden2read == 1){//止める
                         vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
@@ -3740,7 +3741,7 @@ sprintf(str,"[INFO]bno on\n");
         roboclaw2.SpeedM1(roboclawCmd1);//昇降後
         roboclaw2.SpeedM2(roboclawCmd2);//後輪
 
-        pc.printf("md: %d, %d, %d\n",roboclawCmd0,roboclawCmd1,roboclawCmd2);
+        // pc.printf("md: %d, %d, %d\n",roboclawCmd0,roboclawCmd1,roboclawCmd2);
 
         cam_pitch_cmd = (-15/180)*M_PI;
         cam_yaw_cmd = 0.0;
@@ -4273,34 +4274,26 @@ sprintf(str,"[INFO]bno on\n");
 
         send_posi[0] = out_cam_posi.x * 1000;
         send_posi[1] = out_cam_posi.y * 1000;
-        send_posi[2] = out_cam_posi.z * 1000;
+        send_posi[2] = abs(out_cam_posi.z) * 1000;
         if(out_cam_posi.z < 0)sign1 = 0x80;
-        send_posi[3] = out_cam_posi.pitch * 1000;
+        send_posi[3] = abs(out_cam_posi.pitch) * 1000;
         if(out_cam_posi.pitch < 0)sign2 = 0x80;
-        send_posi[4] = out_cam_posi.yaw * 1000;
+        send_posi[4] = abs(out_cam_posi.yaw) * 1000;
         if(out_cam_posi.yaw < 0)sign3 = 0x80;
 
         send_posi[5] = in_cam_posi.x * 1000;
         send_posi[6] = in_cam_posi.y * 1000;
-        send_posi[7] = in_cam_posi.z * 1000;
+        send_posi[7] = abs(in_cam_posi.z) * 1000;
         if(in_cam_posi.z < 0)sign4 = 0x80;
-        send_posi[8] = in_cam_posi.pitch * 1000;
+        send_posi[8] = abs(in_cam_posi.pitch) * 1000;
         if(in_cam_posi.pitch < 0)sign5 = 0x80;
-        send_posi[9] = in_cam_posi.yaw * 1000;
+        send_posi[9] = abs(in_cam_posi.yaw) * 1000;
         if(in_cam_posi.yaw < 0)sign6 = 0x80;
 
         send_posi[10] = back_cam_posi.x * 1000;
         send_posi[11] = back_cam_posi.y * 1000;
-        send_posi[12] = back_cam_posi.z * 1000;
+        send_posi[12] = abs(back_cam_posi.z) * 1000;
         if(back_cam_posi.z < 0)sign7 = 0x80;
-
-        
-
-        // printf("")
-
-
-        // mode = 2;
-
         
         //pcに送信するデータ
         send_data[0] = cam_mode;
