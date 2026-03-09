@@ -762,7 +762,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         setConvPara(0.01, 0.998);
         switch (direction_flag) {
             case DFRONT:
-                setx = forest[route[route_num].num].x + EDGE_MOVE;
+                setx = forest[route[route_num].num].x + EDGE_MOVE + 0.05;
                 sety = forest[route[route_num].num].y;
             break;
             case DRIGHT:
@@ -975,36 +975,64 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         phase = 202;
     break;
 
-    case 240://旋回して横移動//中心側または中心のとき端に移動
-        // motion.setPathNum(0, 0);
-        // setConvPara(0.01, 0.998);
-        // set_para(8.6, 5.4, (-M_PI/2), 1.5, 3.00, 3.00);
-        // set_front_posi = 400;
-        // phase = 241;
-        motion.setPathNum(2, 0);
+    // case 240://旋回して横移動//中心側または中心のとき端に移動
+    //     // motion.setPathNum(0, 0);
+    //     // setConvPara(0.01, 0.998);
+    //     // set_para(8.6, 5.4, (-M_PI/2), 1.5, 3.00, 3.00);
+    //     // set_front_posi = 400;
+    //     // phase = 241;
+    //     motion.setPathNum(2, 0);
+    //     setConvPara(0.01, 0.998);
+    //     set_front_posi = front_lift_init;
+    //     phase = 241;
+    // break;
+
+    // case 241://TTT前まで移動
+    //     refV = pathTrackingMode(FOLLOW_COMMAND, 5, 310, DEFAULT);
+    // break;
+     case 240://旋回して横移動//中心側または中心のとき端に移動
+        motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
+        set_para(8.6, 5.25, (-M_PI/2), 1.5, 2.00, 2.00);
+        phase = 241;
         set_front_posi = front_lift_init;
         phase = 241;
     break;
 
     case 241://TTT前まで移動
+        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 242, DEFAULT);
+    break;
+
+     case 242://旋回して横移動//中心側または中心のとき端に移動
+        // motion.setPathNum(0, 0);
+        // setConvPara(0.01, 0.998);
+        // set_para(8.6, 5.4, (-M_PI/2), 1.5, 3.00, 3.00);
+        // set_front_posi = 400;
+        // phase = 241;
+        motion.setPathNum(3, 0);
+        setConvPara(0.01, 0.998);
+        set_front_posi = front_lift_init;
+        phase = 243;
+    break;
+
+    case 243://TTT前まで移動
         refV = pathTrackingMode(FOLLOW_COMMAND, 5, 310, DEFAULT);
     break;
 
-    case 242://弧を描きながら移動する
-        // motion.setPathNum(0, 0);
-        // setConvPara(0.01, 0.998);
+    // case 242://弧を描きながら移動する
+    //     // motion.setPathNum(0, 0);
+    //     // setConvPara(0.01, 0.998);
 
-        // gpath_x[0] = gPosi.x;
-        // gpath_x[1] = 9.1;
-        // gpath_x[2] = 10.2;
-        // gpath_x[3] = 10.75;
-        // gpath_y[0] = gPosi.y;
-        // gpath_y[1] = 5.8;
-        // gpath_y[2] = 5.7;
-        // gpath_y[3] = 4.2;
-        // set_para2(gpath_x, gpath_y, M_PI/2, 0.5, 3.00, 3.00);
-    break;
+    //     // gpath_x[0] = gPosi.x;
+    //     // gpath_x[1] = 9.1;
+    //     // gpath_x[2] = 10.2;
+    //     // gpath_x[3] = 10.75;
+    //     // gpath_y[0] = gPosi.y;
+    //     // gpath_y[1] = 5.8;
+    //     // gpath_y[2] = 5.7;
+    //     // gpath_y[3] = 4.2;
+    //     // set_para2(gpath_x, gpath_y, M_PI/2, 0.5, 3.00, 3.00);
+    // break;
 
 
 
@@ -1024,7 +1052,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 310://ラック前 //昇降下げてKFS保持する
         if(front_syusoku)//設置用に保持して
             send_num = 20;
-        tar_posi_kfs_rack_y = kfs_rack_posi_y;
+            tar_posi_kfs_rack_y = kfs_rack_posi_y;
             if(rack_num == 0){
                 tar_posi_kfs_rack_x = kfs_rack_posi_x[0];
             }else if(rack_num == 1){
