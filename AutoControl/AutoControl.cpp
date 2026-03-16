@@ -31,6 +31,7 @@ extern bool set_print;
 extern forest_route route[7];
 extern bool front_syusoku;
 extern bool back_syusoku;
+extern double distance_out, distance_in, distance_front, distance_back;
 
 PathTracking motion(FOLLOW_COMMAND); // 経路追従(接線方向向く)モードでとりあえず初期化
 
@@ -478,7 +479,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         phase = 201;
     break;
     case 201: //forest前に移動
-        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2020, DEFAULT);
+        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 202, DEFAULT);
     break;
     case 2020:
         if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON){
@@ -528,6 +529,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
     case 203: //旋回
         refV = pathTrackingMode(POSITION_PID, 0, 204, DEFAULT);
+        refV.z = refV.z * 0.6;
         // phase = 204;
     break;
     case 204: //1
@@ -592,7 +594,21 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
         if(hight_flag == -2){
-            low_collect = 0.050;
+            // low_collect = 0.050;
+            switch (direction_flag) {
+                case DFRONT:
+                    low_collect = EDGE_MOVE - (distance_front - 0.80);
+                break;
+                case DRIGHT:
+                    low_collect = EDGE_MOVE - (distance_out - 0.80);
+                break;
+                case DLEFT:
+                    low_collect = EDGE_MOVE - (distance_in - 0.80);
+                break;
+                case DBACK:
+                    low_collect = EDGE_MOVE - (distance_back - 0.80);
+                break;
+            }
         }else {
             low_collect = 0;
         }
@@ -604,7 +620,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             case DRIGHT:
                 setx = forest[route[route_num].num].x;
                 sety = forest[route[route_num].num].y + EDGE_MOVE - low_collect;
-            break;
+            break;  
             case DLEFT:
                 setx = forest[route[route_num].num].x;
                 sety = forest[route[route_num].num].y - EDGE_MOVE + low_collect;

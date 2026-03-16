@@ -167,12 +167,14 @@ UDP client(A_ADDRESS,A_PORT);
 
 bool sendData(char data[],int n){
     int num = client.sendData(data,n);
-    printf("num:%d\t",num);
+    // printf("num:%d\t",num);
     return num;
 }
 
+char pc_buf[50];
+
 bool receiveData(int mode){
-    char buf[50];
+    // static char buf[50];
     int readCount = 0;
     bool comm_check = false;
     int receive_mode = 0;
@@ -189,28 +191,28 @@ bool receiveData(int mode){
     int next_set_posi;
 
 
-    int n = client.upData(buf,50);
+    int n = client.upData(pc_buf,50);
     // printf("n:%d\t",n);
     if(n > 0){
-        receive_mode = buf[1];
+        receive_mode = pc_buf[1];
         switch(receive_mode){
             case 0://槍先
                 if(n == 3){
-                    spear_num = (int)buf[1];
-                    next_spear_num = (int)buf[2];
+                    spear_num = (int)pc_buf[1];
+                    next_spear_num = (int)pc_buf[2];
                 }
             break;
             case 1://R1確認
                 if(n == 2){
-                    R1_posi = (int)buf[1];
+                    R1_posi = (int)pc_buf[1];
                 }
             break;
             case 2://MF
                 if(n == 5){//移動するマス	行動内容	次に移動するマス	行動内容
-                    MF_move_num = (int)buf[1];
-                    MF_move_phase = (int)buf[2];
-                    next_MF_move_num = (int)buf[3];
-                    next_MF_move_phase = (int)buf[4];
+                    MF_move_num = (int)pc_buf[1];
+                    MF_move_phase = (int)pc_buf[2];
+                    next_MF_move_num = (int)pc_buf[3];
+                    next_MF_move_phase = (int)pc_buf[4];
                     // MF
                 }
             break;
@@ -220,22 +222,22 @@ bool receiveData(int mode){
                 }
             break;
         }
-        if(n == 8){
-            // for(int i=0;i<)
-            // receive_data = buf[0];
-            // receive_data1 = buf[1];
-            // receive_collect_kfs[0] = (int)buf[0];
-            // receive_collect_kfs[1] = (int)buf[1];
-            // receive_collect_spear[0] = (int)buf[2];
-            // receive_collect_spear[1] = (int)buf[3];
-            // receive_kfs_posi[0][0] = ((int)buf[4] << 8) | (int)buf[5];
-            // receive_kfs_posi[0][1] = ((int)buf[6] << 8) | (int)buf[7];
-            comm_check = true;
+        // if(n == 8){
+        //     // for(int i=0;i<)
+        //     // receive_data = buf[0];
+        //     // receive_data1 = buf[1];
+        //     // receive_collect_kfs[0] = (int)buf[0];
+        //     // receive_collect_kfs[1] = (int)buf[1];
+        //     // receive_collect_spear[0] = (int)buf[2];
+        //     // receive_collect_spear[1] = (int)buf[3];
+        //     // receive_kfs_posi[0][0] = ((int)buf[4] << 8) | (int)buf[5];
+        //     // receive_kfs_posi[0][1] = ((int)buf[6] << 8) | (int)buf[7];
+        //     comm_check = true;
 
-        }
-        if(n == 2){//槍先エリア１
+        // }
+        // if(n == 2){//槍先エリア１
 
-        }
+        // }
     }
     // printf("comm check:%d\n",comm_check);
     return comm_check;
@@ -985,7 +987,7 @@ side4 forest_Posi[18] = {//前，左，右，後
     {6.80,1.2,2.4,5.6}, {6.80,2.4,3.6,5.6}, {6.80,3.6,4.8,5.6},
     {5.60,1.2,2.4,4.4}, {5.60,2.4,3.6,4.4}, {5.60,3.6,4.8,4.4},
     {4.40,1.2,2.4,3.2}, {4.40,2.4,3.6,3.2}, {4.40,3.6,4.8,3.2},
-    {3.20,0.0,0.0,0.0}, {3.20,0.0,0.0,0.0}, {3.20,0.0,0.0,0.0},
+    {3.20,0.0,6.0,0.0}, {3.20,0.0,6.0,0.0}, {3.20,0.0,6.0,0.0},
 };
 
 side4 box_Posi[18] = {//前，左(in)，右(out)，後
@@ -2131,7 +2133,7 @@ sprintf(str,"[INFO]bno on\n");
 
     if (flag_int) {//INT_TIME毎に処理される．フラグ処理
         // interval_time = t1.read_us();
-        printf("time:%d  \n",t1.read_ms());
+        // printf("time:%d  \n",t1.read_ms());
         t1.reset();
         // interval_sum += interval_time;
         
@@ -2189,6 +2191,7 @@ sprintf(str,"[INFO]bno on\n");
                 if(con.readButton(R1) == -1){//タイヤをフリー状態にする，速度0
                     // ControlMode = MANUAL_MODE;
                     // platform.freeWheel();
+                    platform.setPosi(coords {5.00, 3.00, 0.000});
                 }
                 if(con.readButton(LEFT) == -1) {
                     flag_lift = 1;
@@ -2490,7 +2493,7 @@ sprintf(str,"[INFO]bno on\n");
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
                 // sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
                 // mySD.write_logdata(str);
-                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],a1[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
+                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%lf,%lf,%d,%d,,%d,%d,%d,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],a1[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i],u[i],v[i],w[i],x[i],y[i]);
                 mySD.write_logdata(str);
                 i++;
             }
@@ -2689,7 +2692,7 @@ sprintf(str,"[INFO]bno on\n");
 
             back_cam_posi.x = gPosi.x + cam_back_x;
             back_cam_posi.y = gPosi.y + cam_back_y;
-            back_cam_posi.z = gPosi.z;
+            back_cam_posi.z = gPosi.z + M_PI;
 
             // pc.printf("x:%lf,y:%lf,z:%lf,\tx:%lf,y:%lf,z:%lf,yaw:%lf,pitch:%lf,\tx:%lf,y:%lf,z:%lf,yaw:%lf,pitch:%lf,\tx:%lf,y:%lf,z:%lf\n",gPosi.x,gPosi.y,gPosi.z,in_cam_posi.x,in_cam_posi.y,in_cam_posi.z,in_cam_posi.yaw,in_cam_posi.pitch,out_cam_posi.x,out_cam_posi.y,out_cam_posi.z,out_cam_posi.yaw,out_cam_posi.pitch,back_cam_posi.x,back_cam_posi.y,back_cam_posi.z);
 
@@ -2855,12 +2858,12 @@ sprintf(str,"[INFO]bno on\n");
                 switch (route[autonomous.route_num].num) {
                     case 0:
                         flag_use_front = true;
-                        flag_use_in = false;
+                        flag_use_in = true;
                         flag_use_out = false;
                         flag_use_back = false;
                     break;
                     case 1:
-                        flag_use_front = true;
+                        flag_use_front = false;
                         flag_use_in = false;
                         flag_use_out = false;
                         flag_use_back = false;
@@ -2868,7 +2871,7 @@ sprintf(str,"[INFO]bno on\n");
                     case 2:
                         flag_use_front = true;
                         flag_use_in = false;
-                        flag_use_out = false;
+                        flag_use_out = true;
                         flag_use_back = false;
                     break;
                     case 3:
@@ -3211,7 +3214,8 @@ sprintf(str,"[INFO]bno on\n");
                     }
                     
                 }else if(mode == MODE_FOREST){//forest
-                    if(autonomous.phase == 212 || autonomous.phase == 214 || autonomous.phase == 224 || autonomous.phase == 226  || autonomous.phase == 232 || autonomous.phase == 2351 || autonomous.phase == 237 || autonomous.phase == 240){//旋回前に自己位置の補正
+                    // if(autonomous.phase == 212 || autonomous.phase == 214 || autonomous.phase == 224 || autonomous.phase == 226  || autonomous.phase == 232 || autonomous.phase == 2351 || autonomous.phase == 237 || autonomous.phase == 240 || autonomous.phase == 202 || autonomous.phase == 203){//旋回前に自己位置の補正
+                    if(autonomous.phase == 212 || autonomous.phase == 214 || autonomous.phase == 224 || autonomous.phase == 226  || autonomous.phase == 232 || autonomous.phase == 2351 || autonomous.phase == 237 || autonomous.phase == 240 ){//旋回前に自己位置の補正
                         if(flag_use_front && flag_lrtb_front){
                             lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
                             getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
@@ -3240,6 +3244,13 @@ sprintf(str,"[INFO]bno on\n");
                 if(autonomous.phase == 311){
 
                 }
+                // if(autonomous.phase == 212 && autonomous.hight_flag == -2){
+                //     switch(autonomous.direction_flag){
+                //         case DFRONT:
+                //             lrtbPosi.x = forest_Posi[cubeIndex].front + 
+                //         break;
+                //     }
+                // }
                 pre_distance_front = distance_front;
                 pre_distance_out = distance_out;
                 pre_distance_in = distance_in;
@@ -3253,7 +3264,7 @@ sprintf(str,"[INFO]bno on\n");
                     }else if(autonomous.flag_retry_forest){
                         lrtbPosi.x = distance_back;
                         lrtbPosi.y = distance_in + 0.15 - 0.025;
-                        platform.setPosi(coords {lrtbPosi.x, lrtbPosi.y, RETRY_F_Z});
+                        platform.setPosi(coords {lrtbPosi.x, lrtbPosi.y, gPosi.z});
                     }else {
                         lrtbPosi.x = distance_back;
                         // lrtbPosi.y = distance_in;
@@ -3358,7 +3369,7 @@ sprintf(str,"[INFO]bno on\n");
             
         }
 
-        printf("ttime:%d  \n",t1.read_ms());
+        // printf("ttime:%d  \n",t1.read_ms());
         t1.reset();
 
 
@@ -3591,16 +3602,21 @@ sprintf(str,"[INFO]bno on\n");
                         refV.x = 0.0;
                         back_syusoku = false;
                         front_syusoku = false;
-                        ref_lift_front_posi = STEP_DOWN_FRONT_HIGH;
+                        // ref_lift_front_posi = STEP_DOWN_FRONT_HIGH;
                         ref_lift_back_posi = STEP_DOWN_BACK_HIGH;
                         stepdown_count = 3;
                     }
                 break;
                 case 3://機体下げる
                     ref_lift_back_posi = STEP_DOWN_BACK_HIGH;
-                    ref_lift_front_posi = STORAGE_POSI;
-                    autonomous.set_front_posi = STORAGE_POSI;
                     autonomous.set_back_posi = STEP_DOWN_BACK_HIGH;
+                    if(back_lift_posi > 30){
+                        ref_lift_front_posi = STORAGE_POSI;
+                        autonomous.set_front_posi = STORAGE_POSI;
+                    }else{
+                        ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
+                        autonomous.set_front_posi = STEP_DOWN_FRONT_LOW;
+                    }
                     if(back_syusoku == 1 && front_syusoku == 1){
                         stepdown_count = 0;
                         stepdown_flag = false;
@@ -4002,8 +4018,8 @@ sprintf(str,"[INFO]bno on\n");
                     // J[SDcount] = platform.mdCmdD;
                     G[SDcount] = out_cam_posi.z;
                     H1[SDcount] = in_cam_posi.z;
-                    I[SDcount] = out_cam_posi.yaw;
-                    G[SDcount] = in_cam_posi.yaw;
+                    I[SDcount] = back_cam_posi.z;
+                    G[SDcount] = ref_lift_back_posi;
 
                     K[SDcount] = autonomous.Px(3);
                     L4[SDcount] = autonomous.Py(3);
@@ -4012,7 +4028,8 @@ sprintf(str,"[INFO]bno on\n");
 
                     M[SDcount] = lrtbPosi.y;
                     N[SDcount] = lrtbPosi.x;
-                    O[SDcount] = lrtbPosi.z;
+                    O[SDcount] =  back_lift_posi;
+                    // O[SDcount] = lrtbPosi.z;
 
                     // %d,%d,%d,
 
@@ -4026,10 +4043,17 @@ sprintf(str,"[INFO]bno on\n");
                     
 
                     P[SDcount] = ref_lift_front_posi;
-                    Q[SDcount] = ref_lift_back_posi;
+                    // Q[SDcount] = ref_lift_back_posi;
 
                     R[SDcount] = front_lift_posi;
-                    S[SDcount] = back_lift_posi;
+                    // S[SDcount] = back_lift_posi;
+
+                    // P[SDcount] = distance_front;
+                    Q[SDcount] = distance_in;
+
+                    S[SDcount] = distance_out;
+                    // S[SDcount] = distance_back;
+
 
                     f[SDcount] = front_syusoku;
                     g[SDcount] = back_syusoku;
@@ -4050,10 +4074,10 @@ sprintf(str,"[INFO]bno on\n");
                     r[SDcount] = autonomous.up_num;
                     s[SDcount] = autonomous.send_num;
                     t[SDcount] = autonomous.route_num;
-                    u[SDcount] = route[autonomous.route_num].num;
+                    // u[SDcount] = route[autonomous.route_num].num;
 
-                    v[SDcount] = cubeIndex;
-                    w[SDcount] = autonomous.direction_flag;
+                    // v[SDcount] = cubeIndex;
+                    // w[SDcount] = autonomous.direction_flag;
                     T[SDcount] = autonomous.setx;
                     U[SDcount] = autonomous.sety;
                     V[SDcount] = autonomous.setz;
@@ -4061,8 +4085,14 @@ sprintf(str,"[INFO]bno on\n");
                     W[SDcount] = autonomous.diffx;
                     X[SDcount] = autonomous.diffy;
 
-                    x[SDcount] = autonomous.khs;
-                    y[SDcount] = cubeIndex;
+                    // x[SDcount] = autonomous.khs;
+                    // y[SDcount] = cubeIndex;
+
+                    u[SDcount] = (int)pc_buf[0];
+                    v[SDcount] = (int)pc_buf[1];
+                    w[SDcount] = (int)pc_buf[2];
+                    x[SDcount] = (int)pc_buf[3];
+                    y[SDcount] = (int)pc_buf[4];
 
                     // O1[SDcount] = platform.mdCmdA;
                     // O2[SDcount] = platform.mdCmdB;
@@ -4179,6 +4209,7 @@ sprintf(str,"[INFO]bno on\n");
         // // // // //速度指令
         sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
         // sprintf(str,"%lf,%lf,%lf,%lf,%lf,%lf,%d,%d\n",autonomous.forest[route[autonomous.route_num].num].x,autonomous.forest[route[autonomous.route_num].num].y,autonomous.forest[route[autonomous.route_num + 1].num].x,autonomous.forest[route[autonomous.route_num + 1].num].y,autonomous.diffx,autonomous.diffy,autonomous.direction_flag,autonomous.phase);
+        // sprintf(str, "%d,%d,%lf,%lf\n",roboclawCmd0,limit8read,front_lift_posi,ref_lift_front_posi);
         invoke_print(str);
         // pc.printf("aa:: %lf\n",remainder(3.14*3/2, 2*M_PI));
 
@@ -4264,13 +4295,13 @@ sprintf(str,"[INFO]bno on\n");
     // pcとの通信--------------------------------------------------------------------
     // if(pc_comm && flag_pc && !flag_error){
     if(pc_comm && flag_pc){
-        pc.printf("\n%d\tt:%d\n",timer.read_ms(),tttt);
+        // pc.printf("\n%d\tt:%d\n",timer.read_ms(),tttt);
         timer.reset();
         int cam_mode = mode;
 
 
         static int send_posi[13];
-        static char send_data[30];
+        static char send_data[31];
         int forest_num = route[autonomous.route_num].num;
         int box_num = autonomous.up_box_num;
         int data_num;
@@ -4339,7 +4370,8 @@ sprintf(str,"[INFO]bno on\n");
 
         send_data[27] = forest_num;//
         send_data[28] = box_num;//
-        send_data[29] = '\n';
+        send_data[29] = autonomous.forest[route[autonomous.route_num].num].hight;
+        send_data[30] = '\n';
 
         
 
@@ -4364,7 +4396,7 @@ sprintf(str,"[INFO]bno on\n");
         //sendData_maicon(send_data,18);
         // sendData_pc(send_data,data_num);
         // sendData(send_data,data_num);
-        sendData(send_data,30);
+        sendData(send_data,31);
 
         // flag_receive = receiveData_pc(mode);
         // flag_receive = receiveData_pc(20);
