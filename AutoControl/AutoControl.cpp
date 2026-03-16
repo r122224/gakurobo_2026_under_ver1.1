@@ -478,7 +478,13 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         phase = 201;
     break;
     case 201: //forest前に移動
-        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 202, DEFAULT);
+        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2020, DEFAULT);
+    break;
+    case 2020:
+        if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON){
+            phase = 202;//保持したよが来たらにしたい
+        }
+        // mode = 0;
     break;
     case 202://旋回の確認
         if(flag_fin == true){
@@ -1009,14 +1015,27 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         // set_para(8.6, 5.4, (-M_PI/2), 1.5, 3.00, 3.00);
         // set_front_posi = 400;
         // phase = 241;
-        motion.setPathNum(3, 0);
+        motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
+        // double path_x[4] = {gPosi.x, 11.0, 11.0, 11.0};
+        // double path_y[4] = {gPosi.y, 5.25, 5.25, 2.0};
+        // set_para2(path_x, path_y, -M_PI/2, 1.0, 4.00, 3.00);
+        gpath_x[0] = gPosi.x;
+        gpath_x[1] = 11.0;
+        gpath_x[2] = 11.0;
+        gpath_x[3] = 11.0;
+        gpath_y[0] = gPosi.y;
+        gpath_y[1] = 5.25;
+        gpath_y[2] = 5.25;
+        gpath_y[3] = 2.00;
+        // gpath_y[3] = 0.45;
+        set_para2(gpath_x, gpath_y, (-M_PI/2), 0.5, 3.00, 3.00);
         set_front_posi = front_lift_init;
         phase = 243;
     break;
 
     case 243://TTT前まで移動
-        refV = pathTrackingMode(FOLLOW_COMMAND, 5, 310, DEFAULT);
+        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 310, DEFAULT);
     break;
 
     // case 242://弧を描きながら移動する

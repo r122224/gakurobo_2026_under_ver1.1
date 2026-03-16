@@ -3747,6 +3747,12 @@ sprintf(str,"[INFO]bno on\n");
         cam_yaw_cmd = 0.0;
         cam_pitch_cmd2 = (-15/180)*M_PI;
         cam_yaw_cmd2 = 0.0;
+        if(mode == MODE_ZONE3){
+            cam_pitch_cmd = (20/180)*M_PI;
+            cam_yaw_cmd = 0.0;
+            cam_pitch_cmd2 = (20/180)*M_PI;
+            cam_yaw_cmd2 = 0.0;
+        }
         // cam_pitch_cmd = 0.0;
         // cam_yaw_cmd = 0.0;
         // cam_pitch_cmd2 = 0.0;
@@ -3787,7 +3793,7 @@ sprintf(str,"[INFO]bno on\n");
         if(autonomous.phase == 0){
             autonomous.send_num = 0;
         }
-        if(autonomous.phase == 200){
+        if(autonomous.phase == 200 || autonomous.phase == 201 || autonomous.phase == 2020){
             mode = MODE_FOREST;
         }else if(autonomous.phase == 310 || autonomous.phase == 311){
             mode = MODE_ZONE3;
@@ -3990,10 +3996,15 @@ sprintf(str,"[INFO]bno on\n");
                     // H1[SDcount] = autonomous.onx();
                     // I[SDcount] = autonomous.ony();
                     // J[SDcount] = autonomous.angle();
-                    G[SDcount] = platform.mdCmdA;
-                    H1[SDcount] = platform.mdCmdB;
-                    I[SDcount] = platform.mdCmdC;
-                    J[SDcount] = platform.mdCmdD;
+                    // G[SDcount] = platform.mdCmdA;
+                    // H1[SDcount] = platform.mdCmdB;
+                    // I[SDcount] = platform.mdCmdC;
+                    // J[SDcount] = platform.mdCmdD;
+                    G[SDcount] = out_cam_posi.z;
+                    H1[SDcount] = in_cam_posi.z;
+                    I[SDcount] = out_cam_posi.yaw;
+                    G[SDcount] = in_cam_posi.yaw;
+
                     K[SDcount] = autonomous.Px(3);
                     L4[SDcount] = autonomous.Py(3);
 
@@ -4273,26 +4284,26 @@ sprintf(str,"[INFO]bno on\n");
         char sign7 = 0x00;
 
         send_posi[0] = out_cam_posi.x * 1000;
-        send_posi[1] = out_cam_posi.y * 1000;
-        send_posi[2] = abs(out_cam_posi.z) * 1000;
+        send_posi[1] = abs(int(out_cam_posi.y * 1000));
+        send_posi[2] = abs(int(out_cam_posi.z * 1000));
         if(out_cam_posi.z < 0)sign1 = 0x80;
-        send_posi[3] = abs(out_cam_posi.pitch) * 1000;
+        send_posi[3] = abs(int(out_cam_posi.pitch * 1000));
         if(out_cam_posi.pitch < 0)sign2 = 0x80;
-        send_posi[4] = abs(out_cam_posi.yaw) * 1000;
+        send_posi[4] = abs(int(out_cam_posi.yaw * 1000));
         if(out_cam_posi.yaw < 0)sign3 = 0x80;
 
         send_posi[5] = in_cam_posi.x * 1000;
-        send_posi[6] = in_cam_posi.y * 1000;
-        send_posi[7] = abs(in_cam_posi.z) * 1000;
+        send_posi[6] = abs(int(in_cam_posi.y * 1000));
+        send_posi[7] = abs(int(in_cam_posi.z * 1000));
         if(in_cam_posi.z < 0)sign4 = 0x80;
-        send_posi[8] = abs(in_cam_posi.pitch) * 1000;
+        send_posi[8] = abs(int(in_cam_posi.pitch * 1000));
         if(in_cam_posi.pitch < 0)sign5 = 0x80;
-        send_posi[9] = abs(in_cam_posi.yaw) * 1000;
+        send_posi[9] = abs(int(in_cam_posi.yaw * 1000));
         if(in_cam_posi.yaw < 0)sign6 = 0x80;
 
         send_posi[10] = back_cam_posi.x * 1000;
-        send_posi[11] = back_cam_posi.y * 1000;
-        send_posi[12] = abs(back_cam_posi.z) * 1000;
+        send_posi[11] = abs(int(back_cam_posi.y * 1000));
+        send_posi[12] = abs(int(back_cam_posi.z * 1000));
         if(back_cam_posi.z < 0)sign7 = 0x80;
         
         //pcに送信するデータ
