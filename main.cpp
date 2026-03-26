@@ -2562,6 +2562,8 @@ sprintf(str,"[INFO]bno on\n");
             get_lift_front_count = -enc_lift_front_angle.getEncount();
             get_lift_back_count = -enc_lift_back_angle.getEncount();
 
+            // printf("%d, %d, %d, %d, %d, %d, %lf\n",get_cam1_pitch_count,get_cam1_yaw_count,get_cam2_pitch_count,get_cam2_yaw_count,get_lift_front_count,get_lift_back_count,gPosi.z);
+
             //リミットスイッチ読み取り
             // limit1read = limit1.read(); //ハンド取得判定
             // limit2read = limit2.read(); //槍先ラック1
@@ -3050,6 +3052,8 @@ sprintf(str,"[INFO]bno on\n");
                 lrtb_dist_1 = 0.0009 * lrtb_1 - 0.0014;//　左
                 lrtb_dist_2 = 0.0009 * lrtb_2 - 0.003;//　右
                 lrtb_dist_3 = (0.0008 * lrtb_3 - 0.0004) - lrtb_diff_3;//  後
+
+                printf("%d, %d, %d, %d\n",lrtb_0,lrtb_1,lrtb_2,lrtb_3);
 
                 //LRTB旋回したときの壁からの垂直距離計算---------------
                 //lrtbと機体中心との位置している角度
@@ -4207,10 +4211,10 @@ sprintf(str,"[INFO]bno on\n");
         // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
         // invoke_print(str);
         // // // // //速度指令
-        sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
+        // sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
         // sprintf(str,"%lf,%lf,%lf,%lf,%lf,%lf,%d,%d\n",autonomous.forest[route[autonomous.route_num].num].x,autonomous.forest[route[autonomous.route_num].num].y,autonomous.forest[route[autonomous.route_num + 1].num].x,autonomous.forest[route[autonomous.route_num + 1].num].y,autonomous.diffx,autonomous.diffy,autonomous.direction_flag,autonomous.phase);
         // sprintf(str, "%d,%d,%lf,%lf\n",roboclawCmd0,limit8read,front_lift_posi,ref_lift_front_posi);
-        invoke_print(str);
+        // invoke_print(str);
         // pc.printf("aa:: %lf\n",remainder(3.14*3/2, 2*M_PI));
 
         // sprintf(str,"\n");
