@@ -252,11 +252,11 @@ bool receiveData(int mode){
 //初期位置-------------
 #define INIT_X  0.350//0.325//0.4//1.15//2.8//0.37
 #define INIT_Y  1.3525//1.4//0.55//3.0//4.605
-#define INIT_Z  (M_PI/2)//0.000//(M_PI/2)
+#define INIT_Z  0.00//(M_PI/2)//0.000//(M_PI/2)
 //リトライ位置 ゾーン3
 #define RETRY_X  11.4
 #define RETRY_Y  5.50
-#define RETRY_Z  (-M_PI/2)
+#define RETRY_Z  0.00//(-M_PI/2)
 //リトライ位置 槍回収しないとき
 #define RETRY_F_X  0.350
 #define RETRY_F_Y  1.3525
@@ -493,7 +493,7 @@ double cam2_deg = 0.0;
 #define SIMULATION_MODE ( false )
 #define USE_CONTROLLER ( true )
 #define USE_SENSOR ( true )
-#define USE_SDCARD ( true )
+#define USE_SDCARD ( false )
 #define USE_PC ( false )
 
 //フィールドサイズ[m]
@@ -590,14 +590,16 @@ int state_mode = 0;// 1 = R1, 2 = R2, 3 = Fake
 // Serial pc(USBTX, USBRX, 230400);
 Serial pc(USBTX, USBRX, 115200);
 Controller con(P7_4, P7_5, 115200); // xbee
-Serial com(P5_3,P5_4,115200);//マイコン間通信
+// Serial com(P5_3,P5_4,115200);//マイコン間通信
+// Serial com(P8_13,P8_11,115200);//マイコン間通信
+Serial com(P8_14,P8_15,115200);//マイコン間通信
 CommTalk talk(&com,115200);//マイコン間通信　
 //limitスイッチ
 LimitComm lim(P5_6, P5_7, 115200); //tx,rx,BaudRateP5_6, P5_7
 
 //roboclaw-------------------------------（昇降2個，前2個，後ろ1個）　(足回り4個)
-RoboClaw roboclaw1(131, 115200*2, P8_14, P8_15);//M1:昇降（前）
-RoboClaw roboclaw2(128, 115200*2, P8_14, P8_15);//M1:昇降（後），M2:後輪（1個）,
+RoboClaw roboclaw1(131, BOUDRATE, P8_14, P8_15);//M1:昇降（前）
+RoboClaw roboclaw2(128, BOUDRATE, P8_14, P8_15);//M1:昇降（後），M2:後輪（1個）,
 // RoboClaw roboclaw3(130, 115200*2, P8_14, P8_15);//前輪
 
 //昇降前，昇降後，後輪
@@ -1094,9 +1096,9 @@ void timer_warikomi(){
         // pc.printf("%d\n",t1.read_ms());
         // t1.reset();
 
-        flag_int = true;
-        flag_con_tuusin = true;
-        flag_limitcomm = true;
+        // flag_int = true;
+        // flag_con_tuusin = true;
+        // flag_limitcomm = true;
         //------------
         // bool now = us_echo.read();
 
@@ -1124,7 +1126,11 @@ void timer_warikomi(){
         if(timer_count % 5 == 0){
             flag_100ms = true;
         }
-        if(timer_count % 3 == 0){
+        // if(timer_count % 3 == 0){
+        //     flag_tuusin = true;
+        //     flag_pc = true;
+        // }
+        if(timer_count % 2 == 0){
             flag_tuusin = true;
             flag_pc = true;
         }
@@ -1705,8 +1711,8 @@ int main() {
     PID_lift_back_down.PIDinit(0.0, 0.0);
     sprintf(str,"[INFO] waitgyro\n");
     invoke_print(str);
-    if(!dip[2].read())
-        client.init(B_ADDRESS,B_PORT);
+    // if(!dip[2].read())
+    //     client.init(B_ADDRESS,B_PORT);
     sprintf(str,"[INFO] waitgyro\n");
     invoke_print(str);
     // client.init(B_ADDRESS,B_PORT);
@@ -1719,22 +1725,22 @@ int main() {
     if(flag_use_sensor){
         sprintf(str,"[INFO] waitgyro14\n");
         invoke_print(str);
-        if(lpms.init() == 1){
-            sprintf(str,"[INFO] waitlpms2\n");
-            invoke_print(str);
-        }else{
-            if(USE_DIP){
-                while (1) {
-                    static int reset_count = 0;
-                    if(btn[4].read() == 0) reset_count++;
-                    else reset_count = 0;
-                    if(reset_count > 66) {
-                        NVIC_SystemReset();
-                    }
-                }
+        // if(lpms.init() == 1){
+        //     sprintf(str,"[INFO] waitlpms2\n");
+        //     invoke_print(str);
+        // }else{
+        //     if(USE_DIP){
+        //         while (1) {
+        //             static int reset_count = 0;
+        //             if(btn[4].read() == 0) reset_count++;
+        //             else reset_count = 0;
+        //             if(reset_count > 66) {
+        //                 NVIC_SystemReset();
+        //             }
+        //         }
                 
-            }
-        }
+        //     }
+        // }
         // if(bno085.init()) printf("init\n");
         // spi.format(8,3);
         // spi.frequency(2000000);
@@ -3757,9 +3763,9 @@ sprintf(str,"[INFO]bno on\n");
             roboclawCmd2 = 0;
         }
 
-        roboclaw1.SpeedM1(roboclawCmd0);//昇降前
-        roboclaw2.SpeedM1(roboclawCmd1);//昇降後
-        roboclaw2.SpeedM2(roboclawCmd2);//後輪
+        // roboclaw1.SpeedM1(roboclawCmd0);//昇降前
+        // roboclaw2.SpeedM1(roboclawCmd1);//昇降後
+        // roboclaw2.SpeedM2(roboclawCmd2);//後輪
 
         // pc.printf("md: %d, %d, %d\n",roboclawCmd0,roboclawCmd1,roboclawCmd2);
 
@@ -4209,6 +4215,7 @@ sprintf(str,"[INFO]bno on\n");
         // invoke_print(str);
         // // // //最終的な自己位置
         // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
+        // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf\n ", refV.x, refV.y, refV.z);
         // invoke_print(str);
         // // // // //速度指令
         // sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
@@ -4222,7 +4229,7 @@ sprintf(str,"[INFO]bno on\n");
 
         flag_print = false; // flagを下す
     }
-
+    up_comm = true;
     if(flag_tuusin && up_comm){
         uint8_t send_data[7];
         uint8_t recievedata[2];//受け取り値
@@ -4231,6 +4238,7 @@ sprintf(str,"[INFO]bno on\n");
         //1->box保持個数
         // sprintf(str,"up");
         // invoke_print(str);
+        printf("up\t");
 
         // static int posi[3] = {0, 0, 0};
 
@@ -4239,13 +4247,17 @@ sprintf(str,"[INFO]bno on\n");
         // posi[2] = gPosi.z * 1000;
         
         
-        send_data[0] = autonomous.send_num;
-        send_data[1] = air_state;
-        send_data[2] = autonomous.khs;//KFS_height_state;
-        send_data[3] = 3;//also_KFS_hold_num
-        send_data[4] = lrtb_check;
-        send_data[5] = (int(abs(front_lift_posi)) & 0b000000111111);
-        send_data[6] = (int(abs(front_lift_posi)) & 0b111111000000) >> 6;
+        // send_data[0] = autonomous.send_num;
+        // send_data[1] = air_state;
+        // send_data[2] = autonomous.khs;//KFS_height_state;
+        // send_data[3] = 3;//also_KFS_hold_num
+        // send_data[4] = lrtb_check;
+        // send_data[5] = (int(abs(front_lift_posi)) & 0b000000111111);
+        // send_data[6] = (int(abs(front_lift_posi)) & 0b111111000000) >> 6;
+
+        send_data[0] = 4;
+        send_data[1] = 2;
+        send_data[2] = 6;
          // send_data[2] = front_lift_posi * 10;
 
         //0個目：0->初期，1->ハンド展開，
@@ -4256,18 +4268,20 @@ sprintf(str,"[INFO]bno on\n");
         //3個目：取得予定の個数（テスト時4）
         //4個目：lrtbによる取得範囲（段が下の時だけ）0->範囲外，1->範囲内
 
-        talk.sendData(send_data, 7);
-        talk.update(2);
+        talk.sendData(send_data, 3);
+        talk.update(3);
 
-        for(int i = 0; i < 2; i++){//受け取り
+        for(int i = 0; i < 3; i++){//受け取り
             recievedata[i] = talk.data[i];
         }
+        printf("com:%d,0:%d,1:%d,2:%d\n",talk.commcheck,talk.data[0],talk.data[1],talk.data[2]);
 
         autonomous.up_num = (int)recievedata[0];
         autonomous.up_box_num = (int)recievedata[1];
 
         //0個目：1->槍先取得，2->槍先離した，3->KFSを回収時保持した，4->KFSを機体内に格納済み
         //1個目：box取得個数
+        flag_tuusin = false;
     }
 
     //ソレノイド制御基板通信-------------------------------------------

@@ -332,6 +332,7 @@ void Platform::VelocityControl(coords refV)
         refOmegaB = (-refV.x - refV.y + refV.z * ( TREAD_2 + WHEELBASE_2 ) ) / WHEEL_R;// 左後
         refOmegaC = (+refV.x - refV.y + refV.z * ( TREAD_2 + WHEELBASE_2 ) ) / WHEEL_R;// 右後
         refOmegaD = (+refV.x + refV.y + refV.z * ( TREAD_2 + WHEELBASE_2 ) ) / WHEEL_R;// 右前 rad/s
+        // printf("A:%d, B:%d, C:%d, E:%d\t",refOmegaA,refOmegaB,refOmegaC,refOmegaD);
 
         // RoboClawの指令値に変換
         // double mdCmdA, mdCmdB, mdCmdC, mdCmdD;
@@ -366,7 +367,7 @@ void Platform::VelocityControl(coords refV)
 
         refV_x_cmd = (mdCmdA + mdCmdB + mdCmdC + mdCmdD) / 4;//
 
-        // printf("%d,%d,%d,%d",mdCmdA,mdCmdB,mdCmdC,mdCmdD);
+        // printf("A:%d, B:%d, C:%d, E:%d\n",mdCmdA,mdCmdB,mdCmdC,mdCmdD);
 
         // float odCmdA, odCmdB, odCmdC, odCmdD;//Odriveの指令値変換（rps）
         // odCmdA = refOmegaA / (2.0 * M_PI);

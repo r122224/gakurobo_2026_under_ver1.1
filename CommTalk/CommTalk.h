@@ -27,6 +27,7 @@ uint8_t data[100];//格納しておくデータは100個まで
 double required_datax, required_datay;//受け取るデータ
 unsigned char *send_datax;
 unsigned char *send_datay;
+bool commcheck;
 
 private:
 Serial *pSerial;

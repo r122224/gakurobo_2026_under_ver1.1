@@ -40,15 +40,15 @@ bool CommTalk::update(unsigned int dataNum){//受け取るデータの個数が�
     char checksum = 0;
     unsigned int bufCount = 0;
     char buf[100];
-    bool commcheck = false;
+    commcheck = false;
 
     // // 受信データ用バッファ
 	// unsigned char receive_datax[sizeof(double)];
     // unsigned char receive_datay[sizeof(double)];
-
+        // printf("A");
         while(pSerial->readable()){
             c = pSerial->getc();
-            //printf("%d\n", (uint8_t)(c - 0x20));
+            printf("%d\n", (uint8_t)(c - 0x20));
            
             if(c == '\n' && dataNum == bufCount - 1){
                 //printf("%d\n", bufCount);
